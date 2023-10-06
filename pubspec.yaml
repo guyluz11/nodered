@@ -1,7 +1,8 @@
 name: nodered
-description: A starting point for Dart libraries or applications.
+description: Control NodeRED server. Read and create nodes, there is also option to install libraries
 version: 1.0.0
-# repository: https://github.com/my_org/my_repo
+repository: https://github.com/CyBear-Jinni/nodered
+homepage: https://nodered.org/
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
