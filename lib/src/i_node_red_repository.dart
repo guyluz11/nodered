@@ -1,5 +1,7 @@
 /// Class to define all Node RED repo functions
 abstract class INodeRedRepository {
+  static late INodeRedRepository instance;
+
   /// Install node module if not exist and set a new flow for that api
   /// Label is name of the flow
   Future<String> setFlowWithModule({
