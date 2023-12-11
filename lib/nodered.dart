@@ -1,6 +1,6 @@
 library;
 
-export 'src/i_node_red_repository.dart';
+export 'src/node_red_service.dart';
 export 'src/node_red_api/node_red_api.dart';
 export 'src/node_red_nodes/external_nodes/chromecast_node_red_api/chromecast_node_red_api.dart';
 export 'src/node_red_nodes/external_nodes/contrib_castv2_nodes/node_red_castv2_connection_node.dart';

@@ -8,7 +8,7 @@ class ChromecastNodeRedApi {
     this.nodeRedMqttBrokerNodeName = 'NodeRed plugs Api Broker',
   });
 
-  final INodeRedRepository repository;
+  final NodeRedService repository;
   final String nodeRedApiBaseTopic;
   final String nodeRedDevicesTopic;
   final String nodeRedMqttBrokerNodeName;

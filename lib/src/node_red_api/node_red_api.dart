@@ -24,9 +24,7 @@ class NodeRedAPI {
   late String requestsUrl;
 
   /// Get the active authentication scheme
-  Future<Response> getAuthLogin() async {
-    return get(Uri.parse('$requestsUrl/auth/login'));
-  }
+  Future<Response> getAuthLogin() => get(Uri.parse('$requestsUrl/auth/login'));
 
   /// Exchange credentials for access token
   Future<Response> postAuthToken({
@@ -54,7 +52,7 @@ class NodeRedAPI {
   }
 
   /// Revoke an access token
-  Future<Response> postAuthRevoke(String token) async {
+  Future<Response> postAuthRevoke(String token) {
     logger.e('postAuthRevoke Not tested yet');
     return post(
       Uri.parse('$requestsUrl/auth/revoke'),
@@ -64,14 +62,10 @@ class NodeRedAPI {
   }
 
   /// Get the runtime settings
-  Future<Response> getSettings() async {
-    return get(Uri.parse('$requestsUrl/settings'));
-  }
+  Future<Response> getSettings() => get(Uri.parse('$requestsUrl/settings'));
 
   /// Get the active flow configuration
-  Future<Response> getFlows() async {
-    return get(Uri.parse('$requestsUrl/flows'));
-  }
+  Future<Response> getFlows() => get(Uri.parse('$requestsUrl/flows'));
 
   /// Set the active flow configuration.
   Future<Response> postFlows({
@@ -80,7 +74,7 @@ class NodeRedAPI {
     required String label,
     int vType = 1,
     String? rev,
-  }) async {
+  }) {
     logger.e('postFlows Not tested yet');
 
     final String jsonStringWithFields;
@@ -121,10 +115,10 @@ class NodeRedAPI {
 
   // TODO: not working
   /// Add a single global node
-  Future<Response> postGlobalNode({
-    /// Should be node json string {}
-    required String nodes,
-  }) async {
+  Future<Response> postGlobalNode(
+
+      /// Should be node json string {}
+      String nodes) async {
     final String jsonStringWithFields = '''
       {
         "id": "global",
@@ -170,9 +164,8 @@ class NodeRedAPI {
   }
 
   /// Get an individual flow configuration
-  Future<Response> getFlowById(String flowId) async {
-    return get(Uri.parse('$requestsUrl/flow/$flowId'));
-  }
+  Future<Response> getFlowById(String flowId) =>
+      get(Uri.parse('$requestsUrl/flow/$flowId'));
 
   /// Update an individual flow configuration
   Future<Response> putFlowById({
@@ -215,23 +208,15 @@ class NodeRedAPI {
   }
 
   /// Delete an individual flow configuration
-  Future<Response> deleteFlowById({
-    required String id,
-  }) async {
-    return delete(
-      Uri.parse('$requestsUrl/flow/$id'),
-    );
-  }
+  Future<Response> deleteFlowById(String id) => delete(
+        Uri.parse('$requestsUrl/flow/$id'),
+      );
 
   /// Get a list of the installed nodes
-  Future<Response> getNodes() async {
-    return get(Uri.parse('$requestsUrl/nodes'));
-  }
+  Future<Response> getNodes() => get(Uri.parse('$requestsUrl/nodes'));
 
   /// Install a new node module
-  Future<Response> postNodes({
-    required String module,
-  }) async {
+  Future<Response> postNodes(String module) {
     final String jsonStringWithFields = '''
     {
       "module": "$module"
@@ -245,15 +230,14 @@ class NodeRedAPI {
   }
 
   /// Get a node module’s information
-  Future<Response> getNodesByModule(String moduleId) async {
-    return get(Uri.parse('$requestsUrl/nodes/$moduleId'));
-  }
+  Future<Response> getNodesByModule(String moduleId) =>
+      get(Uri.parse('$requestsUrl/nodes/$moduleId'));
 
   /// Enable/Disable a node module
   Future<Response> putNodesByModule({
     required String module,
     required bool enableTheModule,
-  }) async {
+  }) {
     logger.e('putNodesByModule Not tested yet');
     final String jsonStringWithFields = '''
         {
@@ -269,9 +253,7 @@ class NodeRedAPI {
   }
 
   /// Remove a node module
-  Future<Response> deleteNodesByModule({
-    required String module,
-  }) async {
+  Future<Response> deleteNodesByModule(String module) {
     logger.e('deleteNodesByModule Not tested yet');
     return delete(
       Uri.parse('$requestsUrl/nodes/$module'),
@@ -282,7 +264,7 @@ class NodeRedAPI {
   Future<Response> getNodesByModelSetInformation(
     String moduleId,
     String set,
-  ) async {
+  ) {
     return get(Uri.parse('$requestsUrl/nodes/$moduleId/$set'));
   }
 
@@ -291,7 +273,7 @@ class NodeRedAPI {
     required String module,
     required String setName,
     required String enableTheModule,
-  }) async {
+  }) {
     logger.e('putNodesModuleSetInformation Not tested yet');
     final String jsonStringWithFields = '''
         {
