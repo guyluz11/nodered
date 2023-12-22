@@ -13,7 +13,7 @@ class NodeRedInjectAtASpecificTimeNode extends NodeRedVisualNodeAbstract {
           type: 'inject',
         );
 
-  List<String>? daysToRepeat;
+  Set<String>? daysToRepeat;
   String? hourToRepeat;
   String? minutesToRepeat;
 

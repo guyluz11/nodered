@@ -4,7 +4,7 @@ import 'package:http/http.dart';
 import 'package:nodered/src/utils.dart';
 
 class EspHomeNodeRedServerApiCalls {
-  static Future<List<EspHomeDeviceObject>> getAllEspHomeDevices() async {
+  static Future<Set<EspHomeDeviceObject>> getAllEspHomeDevices() async {
     final Response discoveredDevices = await post(
       Uri.parse('http://localhost:1880/esphome/discovery'),
       encoding: Encoding.getByName('utf-8'),
@@ -14,12 +14,12 @@ class EspHomeNodeRedServerApiCalls {
       body: {},
     );
 
-    final List<Map<String, dynamic>> allDevices =
-        (jsonDecode(discoveredDevices.body) as List)
+    final Set<Map<String, dynamic>> allDevices =
+        (jsonDecode(discoveredDevices.body) as Set)
             .map((e) => e as Map<String, dynamic>)
-            .toList();
+            .toSet();
 
-    final List<EspHomeDeviceObject> listOfDevices = [];
+    final Set<EspHomeDeviceObject> listOfDevices = {};
 
     for (final Map<dynamic, dynamic> device in allDevices) {
       final EspHomeDeviceObject espHomeDeviceObject = EspHomeDeviceObject(
@@ -39,7 +39,7 @@ class EspHomeNodeRedServerApiCalls {
     return listOfDevices;
   }
 
-  static Future<List<EspHomeDeviceEntityObject>> getEspHomeDeviceEntities(
+  static Future<Set<EspHomeDeviceEntityObject>> getEspHomeDeviceEntities(
     String espHomeDeviceId,
   ) async {
     final Response entitiesOfDevice = await post(
@@ -53,12 +53,12 @@ class EspHomeNodeRedServerApiCalls {
       },
     );
 
-    final List<Map<String, dynamic>> espHomeDeviceEntities =
-        (jsonDecode(entitiesOfDevice.body) as List)
+    final Set<Map<String, dynamic>> espHomeDeviceEntities =
+        (jsonDecode(entitiesOfDevice.body) as Set)
             .map((e) => e as Map<String, dynamic>)
-            .toList();
+            .toSet();
 
-    final List<EspHomeDeviceEntityObject> entityList = [];
+    final Set<EspHomeDeviceEntityObject> entityList = {};
 
     for (final Map<String, dynamic> entity in espHomeDeviceEntities) {
       final EspHomeDeviceEntityObject espHomeDeviceEntityObject =

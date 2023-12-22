@@ -14,7 +14,7 @@ class NodeRedEspHomeDeviceNode extends NodeRedVisualNodeAbstract {
   factory NodeRedEspHomeDeviceNode.passOnlyNewAction({
     required String host,
     required String password,
-    List<List<String>>? wires,
+    Set<Set<String>>? wires,
     String? name,
     String? tempId,
   }) {

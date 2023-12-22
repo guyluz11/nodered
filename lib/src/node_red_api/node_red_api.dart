@@ -143,10 +143,10 @@ class NodeRedAPI {
     /// Flow id will get ignored when creating new flow as mentioned in the doc
     /// TODO: check if flow id stopped getting ignored https://discourse.nodered.org/t/make-setting-an-id-in-post-flow-work/67815
     String? flowId,
-    List<dynamic>? configs,
+    Set<dynamic>? configs,
   }) async {
     final String idOfTheFlow = flowId ?? const Uuid().v1();
-    final List<dynamic> configsList = configs ?? [];
+    final Set<dynamic> configsList = configs ?? {};
 
     final String jsonStringWithFields = '''
       {
@@ -171,12 +171,12 @@ class NodeRedAPI {
   Future<Response> putFlowById({
     required String flowId,
     required String nodes,
-    List<dynamic>? configs,
+    Set<dynamic>? configs,
     bool normalFlow = true,
     String? label,
-    List<dynamic>? subFlows,
+    Set<dynamic>? subFlows,
   }) async {
-    final List<dynamic> configsList = configs ?? [];
+    final Set<dynamic> configsList = configs ?? {};
 
     logger.e('putFlowById Not tested yet');
     final String jsonStringWithFields;

@@ -16,7 +16,7 @@ class NodeRedEspHomeOutNode extends NodeRedVisualNodeAbstract {
   factory NodeRedEspHomeOutNode.passOnlyNewAction({
     required String espHomeNodeDeviceId,
     required String espHomeEntityId,
-    List<List<String>>? wires,
+    Set<Set<String>>? wires,
     String? name,
   }) {
     return NodeRedEspHomeOutNode(

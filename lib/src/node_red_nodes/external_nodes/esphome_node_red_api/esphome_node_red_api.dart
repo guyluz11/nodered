@@ -82,11 +82,11 @@ class EspHomeNodeRedApi {
 
     /// Create an EspHome in node
     final NodeRedEspHomeInNode nodeRedEspHomeInNode = NodeRedEspHomeInNode(
-      wires: [
-        [
+      wires: {
+        {
           mqttOutNode.id,
-        ]
-      ],
+        },
+      },
       espHomeNodeDeviceId: espHomeDeviceId,
       name: 'ESPHome $entityId in type',
       epsHomeDeviceEntityId: entityId,
@@ -95,7 +95,7 @@ class EspHomeNodeRedApi {
 
     /// Create an EspHome out node
     final NodeRedEspHomeOutNode nodeRedEspHomeOutNode = NodeRedEspHomeOutNode(
-      wires: [[]],
+      wires: {{}},
       espHomeNodeDeviceId: espHomeDeviceId,
       name: 'ESPHome $entityId out type',
       espHomeEntityId: entityId,
@@ -104,11 +104,11 @@ class EspHomeNodeRedApi {
 
     final NodeRedFunctionNode nodeRedFunctionToJsonNode =
         NodeRedFunctionNode.inputPayloadToJson(
-      wires: [
-        [
+      wires: {
+        {
           nodeRedEspHomeOutNode.id,
-        ]
-      ],
+        },
+      },
     );
     nodes += ', $nodeRedFunctionToJsonNode';
 
@@ -117,11 +117,11 @@ class EspHomeNodeRedApi {
       name: '$mqttNodeName - $inputDeviceProperty',
       brokerNodeId: mqttBrokerNode.id,
       topic: '$topic/$inputDeviceProperty',
-      wires: [
-        [
+      wires: {
+        {
           nodeRedFunctionToJsonNode.id,
-        ]
-      ],
+        },
+      },
     );
     nodes += ', $nodeRedMqttInNode';
 

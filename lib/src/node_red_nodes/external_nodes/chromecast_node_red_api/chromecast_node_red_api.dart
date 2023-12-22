@@ -60,11 +60,11 @@ class ChromecastNodeRedApi {
     final NodeRedCastV2SenderNode nodeRedCastV2SenderNode =
         NodeRedCastV2SenderNode(
       connectionId: nodeRedCastV2ConnectionNode.id,
-      wires: [
-        [
+      wires: {
+        {
           mqttNode.id,
-        ]
-      ],
+        },
+      },
     );
     nodes += ', $nodeRedCastV2SenderNode';
 
@@ -141,9 +141,11 @@ class ChromecastNodeRedApi {
         '''msg.payload = JSON.parse(\\"{\\\\\\"app\\\\\\": \\\\\\"YouTube\\\\\\", \\\\\\"type\\\\\\": \\\\\\"MEDIA\\\\\\",\\\\\\"videoId\\\\\\": \\\\\\"\\" + msg.payload + \\"\\\\\\"}\\"); return msg;''';
     final NodeRedFunctionNode nodeRedFunctionNode = NodeRedFunctionNode(
       funcString: functionString,
-      wires: [
-        [nextNodeIdToConnectToo],
-      ],
+      wires: {
+        {
+          nextNodeIdToConnectToo,
+        },
+      },
     );
     nodes += nodeRedFunctionNode.toString();
 
@@ -152,9 +154,11 @@ class ChromecastNodeRedApi {
       name: '$mqttNodeName - $playingVideoTopicProperty',
       brokerNodeId: mqttBrokerNode.id,
       topic: '$topic/$playingVideoTopicProperty',
-      wires: [
-        [nodeRedFunctionNode.id],
-      ],
+      wires: {
+        {
+          nodeRedFunctionNode.id,
+        },
+      },
     );
     return '$nodes,\n$nodeRedMqttInNode';
   }
@@ -172,9 +176,11 @@ class ChromecastNodeRedApi {
         '''msg.payload = JSON.parse(\\"{\\\\\\"type\\\\\\": \\\\\\"STOP\\\\\\"}\\"); return msg;''';
     final NodeRedFunctionNode nodeRedFunctionNode = NodeRedFunctionNode(
       funcString: functionString,
-      wires: [
-        [nextNodeIdToConnectToo],
-      ],
+      wires: {
+        {
+          nextNodeIdToConnectToo,
+        },
+      },
     );
     nodes += nodeRedFunctionNode.toString();
 
@@ -183,9 +189,11 @@ class ChromecastNodeRedApi {
       name: '$mqttNodeName - $stopVideoTopicProperty',
       brokerNodeId: mqttBrokerNode.id,
       topic: '$topic/$stopVideoTopicProperty',
-      wires: [
-        [nodeRedFunctionNode.id],
-      ],
+      wires: {
+        {
+          nodeRedFunctionNode.id,
+        },
+      },
     );
     return '$nodes,\n$nodeRedMqttInNode';
   }
@@ -203,9 +211,11 @@ class ChromecastNodeRedApi {
         '''msg.payload = JSON.parse(\\"{\\\\\\"type\\\\\\": \\\\\\"PAUSE\\\\\\"}\\"); return msg;''';
     final NodeRedFunctionNode nodeRedFunctionNode = NodeRedFunctionNode(
       funcString: functionString,
-      wires: [
-        [nextNodeIdToConnectToo],
-      ],
+      wires: {
+        {
+          nextNodeIdToConnectToo,
+        },
+      },
     );
     nodes += nodeRedFunctionNode.toString();
 
@@ -214,9 +224,11 @@ class ChromecastNodeRedApi {
       name: '$mqttNodeName - $pauseVideoTopicProperty',
       brokerNodeId: mqttBrokerNode.id,
       topic: '$topic/$pauseVideoTopicProperty',
-      wires: [
-        [nodeRedFunctionNode.id],
-      ],
+      wires: {
+        {
+          nodeRedFunctionNode.id,
+        },
+      },
     );
     return '$nodes,\n$nodeRedMqttInNode';
   }
@@ -234,9 +246,11 @@ class ChromecastNodeRedApi {
         '''msg.payload = JSON.parse(\\"{\\\\\\"type\\\\\\": \\\\\\"PLAY\\\\\\"}\\"); return msg;''';
     final NodeRedFunctionNode nodeRedFunctionNode = NodeRedFunctionNode(
       funcString: functionString,
-      wires: [
-        [nextNodeIdToConnectToo],
-      ],
+      wires: {
+        {
+          nextNodeIdToConnectToo,
+        },
+      },
     );
     nodes += nodeRedFunctionNode.toString();
 
@@ -245,9 +259,11 @@ class ChromecastNodeRedApi {
       name: '$mqttNodeName - $playVideoTopicProperty',
       brokerNodeId: mqttBrokerNode.id,
       topic: '$topic/$playVideoTopicProperty',
-      wires: [
-        [nodeRedFunctionNode.id],
-      ],
+      wires: {
+        {
+          nodeRedFunctionNode.id,
+        },
+      },
     );
     return '$nodes,\n$nodeRedMqttInNode';
   }
@@ -265,9 +281,11 @@ class ChromecastNodeRedApi {
         '''msg.payload = JSON.parse(\\"{\\\\\\"type\\\\\\": \\\\\\"QUEUE_PREV\\\\\\"}\\"); return msg;''';
     final NodeRedFunctionNode nodeRedFunctionNode = NodeRedFunctionNode(
       funcString: functionString,
-      wires: [
-        [nextNodeIdToConnectToo],
-      ],
+      wires: {
+        {
+          nextNodeIdToConnectToo,
+        },
+      },
     );
     nodes += nodeRedFunctionNode.toString();
 
@@ -276,9 +294,11 @@ class ChromecastNodeRedApi {
       name: '$mqttNodeName - $queuePrevVideoTopicProperty',
       brokerNodeId: mqttBrokerNode.id,
       topic: '$topic/$queuePrevVideoTopicProperty',
-      wires: [
-        [nodeRedFunctionNode.id],
-      ],
+      wires: {
+        {
+          nodeRedFunctionNode.id,
+        },
+      },
     );
     return '$nodes,\n$nodeRedMqttInNode';
   }
@@ -296,9 +316,11 @@ class ChromecastNodeRedApi {
         '''msg.payload = JSON.parse(\\"{\\\\\\"type\\\\\\": \\\\\\"QUEUE_NEXT\\\\\\"}\\"); return msg;''';
     final NodeRedFunctionNode nodeRedFunctionNode = NodeRedFunctionNode(
       funcString: functionString,
-      wires: [
-        [nextNodeIdToConnectToo],
-      ],
+      wires: {
+        {
+          nextNodeIdToConnectToo,
+        },
+      },
     );
     nodes += nodeRedFunctionNode.toString();
 
@@ -307,9 +329,11 @@ class ChromecastNodeRedApi {
       name: '$mqttNodeName - $queueNextVideoTopicProperty',
       brokerNodeId: mqttBrokerNode.id,
       topic: '$topic/$queueNextVideoTopicProperty',
-      wires: [
-        [nodeRedFunctionNode.id],
-      ],
+      wires: {
+        {
+          nodeRedFunctionNode.id,
+        },
+      },
     );
     return '$nodes,\n$nodeRedMqttInNode';
   }
@@ -327,9 +351,11 @@ class ChromecastNodeRedApi {
         '''msg.payload = JSON.parse(\\"{\\\\\\"type\\\\\\": \\\\\\"CLOSE\\\\\\"}\\"); return msg;''';
     final NodeRedFunctionNode nodeRedFunctionNode = NodeRedFunctionNode(
       funcString: functionString,
-      wires: [
-        [nextNodeIdToConnectToo],
-      ],
+      wires: {
+        {
+          nextNodeIdToConnectToo,
+        },
+      },
     );
     nodes += nodeRedFunctionNode.toString();
 
@@ -338,9 +364,11 @@ class ChromecastNodeRedApi {
       name: '$mqttNodeName - $closeAppTopicProperty',
       brokerNodeId: mqttBrokerNode.id,
       topic: '$topic/$closeAppTopicProperty',
-      wires: [
-        [nodeRedFunctionNode.id],
-      ],
+      wires: {
+        {
+          nodeRedFunctionNode.id,
+        },
+      },
     );
     return '$nodes,\n$nodeRedMqttInNode';
   }

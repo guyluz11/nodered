@@ -14,7 +14,7 @@ class NodeRedFunctionNode extends NodeRedVisualNodeAbstract {
   /// Take action and pass it down as property for the next node
   factory NodeRedFunctionNode.passOnlyNewAction({
     required String action,
-    List<List<String>>? wires,
+    Set<Set<String>>? wires,
     String? name,
   }) {
     final String function = '''msg.payload=\\"$action\\"; return msg;''';
@@ -23,7 +23,7 @@ class NodeRedFunctionNode extends NodeRedVisualNodeAbstract {
 
   /// Gets input string and parse the payload as json to the next node
   factory NodeRedFunctionNode.inputPayloadToJson({
-    List<List<String>>? wires,
+    Set<Set<String>>? wires,
   }) {
     const String function =
         '''msg.payload = JSON.parse(msg.payload); return msg;''';

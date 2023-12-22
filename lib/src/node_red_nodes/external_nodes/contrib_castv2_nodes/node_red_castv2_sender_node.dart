@@ -14,7 +14,7 @@ class NodeRedCastV2SenderNode extends NodeRedVisualNodeAbstract {
   /// Take castv2 action node id and pass it down as property and set it up, also pass wires to define the next node to connect to
   factory NodeRedCastV2SenderNode.passOnlyNewAction({
     required String connectionId,
-    List<List<String>>? wires,
+    Set<Set<String>>? wires,
     String? name,
   }) {
     return NodeRedCastV2SenderNode(

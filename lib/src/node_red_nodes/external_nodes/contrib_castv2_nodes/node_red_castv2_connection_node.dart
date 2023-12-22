@@ -13,7 +13,7 @@ class NodeRedCastV2ConnectionNode extends NodeRedVisualNodeAbstract {
 
   factory NodeRedCastV2ConnectionNode.passOnlyNewAction({
     required String host,
-    List<List<String>>? wires,
+    Set<Set<String>>? wires,
     String? name,
   }) {
     return NodeRedCastV2ConnectionNode(

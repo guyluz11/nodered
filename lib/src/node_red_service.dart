@@ -97,7 +97,7 @@ class NodeRedService {
     required String label,
     required String nodes,
     String? flowId,
-    List<dynamic>? configs,
+    Set<dynamic>? configs,
   }) =>
       nodeRedApi.postFlow(
         label: label,

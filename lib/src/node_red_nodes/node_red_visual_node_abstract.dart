@@ -11,15 +11,15 @@ class NodeRedVisualNodeAbstract extends NodeRedNodeAbstract {
   });
 
   // Does not exists in all nodes, maybe we will move it to another abstract class
-  List<List<String>>? wires = [];
+  Set<Set<String>>? wires = {};
 
-  List<List<String>> fixWiresForNodeRed() {
-    final List<List<String>> wiresTemp = [];
+  Set<Set<String>> fixWiresForNodeRed() {
+    final Set<Set<String>> wiresTemp = {};
 
     // '"${mqttNode.id}"'
     if (wires != null) {
-      for (final List<String> tempWire in wires!) {
-        final List<String> fixedWireList = [];
+      for (final Set<String> tempWire in wires!) {
+        final Set<String> fixedWireList = {};
         for (final String tempId in tempWire) {
           if (!tempId.contains('"')) {
             fixedWireList.add('"$tempId"');
