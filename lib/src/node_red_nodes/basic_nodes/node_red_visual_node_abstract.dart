@@ -1,4 +1,4 @@
-import 'package:nodered/src/node_red_nodes/node_red_node_abstract.dart';
+import 'package:nodered/src/node_red_nodes/basic_nodes/node_red_node_abstract.dart';
 
 /// Abstract calss for all the nodes that can be connected on the dashboard
 
@@ -13,7 +13,10 @@ class NodeRedVisualNodeAbstract extends NodeRedNodeAbstract {
   // Does not exists in all nodes, maybe we will move it to another abstract class
   Set<Set<String>>? wires = {};
 
-  Set<Set<String>> fixWiresForNodeRed() {
+  String fixWiresString() =>
+      fixWiresForNodeRed().toString().replaceAll('{', '[').replaceAll('}', ']');
+
+  fixWiresForNodeRed() {
     final Set<Set<String>> wiresTemp = {};
 
     // '"${mqttNode.id}"'

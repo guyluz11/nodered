@@ -1,4 +1,4 @@
-import 'package:nodered/src/node_red_nodes/node_red_visual_node_abstract.dart';
+import 'package:nodered/src/node_red_nodes/basic_nodes/node_red_visual_node_abstract.dart';
 
 /// Class for Node-Red castv2 node
 /// https://flows.nodered.org/node/node-red-contrib-castv2

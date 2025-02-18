@@ -1,4 +1,4 @@
-import 'package:nodered/src/node_red_nodes/node_red_visual_node_abstract.dart';
+import 'package:nodered/src/node_red_nodes/basic_nodes/node_red_visual_node_abstract.dart';
 
 class NodeRedMqttOutNode extends NodeRedVisualNodeAbstract {
   NodeRedMqttOutNode({
@@ -30,7 +30,7 @@ class NodeRedMqttOutNode extends NodeRedVisualNodeAbstract {
     "qos": "$qos",
     "retain": "",
     "broker": "$brokerNodeId",
-    "wires": ${fixWiresForNodeRed()}
+    "wires": ${fixWiresString()}
   }''';
   }
 }

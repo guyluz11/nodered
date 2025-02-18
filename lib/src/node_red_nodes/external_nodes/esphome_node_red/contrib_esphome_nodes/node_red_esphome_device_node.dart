@@ -1,4 +1,4 @@
-import 'package:nodered/src/node_red_nodes/node_red_visual_node_abstract.dart';
+import 'package:nodered/src/node_red_nodes/basic_nodes/node_red_visual_node_abstract.dart';
 
 class NodeRedEspHomeDeviceNode extends NodeRedVisualNodeAbstract {
   NodeRedEspHomeDeviceNode({

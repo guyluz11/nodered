@@ -1,4 +1,4 @@
-import 'package:nodered/src/node_red_nodes/node_red_visual_node_abstract.dart';
+import 'package:nodered/src/node_red_nodes/basic_nodes/node_red_visual_node_abstract.dart';
 
 /// Class for Node-Red function node
 /// https://nodered.org/docs/user-guide/writing-functions
@@ -50,7 +50,7 @@ class NodeRedFunctionNode extends NodeRedVisualNodeAbstract {
     "y": 1000,
     "initialize": "",
     "finalize": "",
-    "wires":  ${fixWiresForNodeRed()}
+    "wires":  ${fixWiresString()}
   }''';
   }
 }

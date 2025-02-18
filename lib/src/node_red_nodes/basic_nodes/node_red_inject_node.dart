@@ -1,4 +1,4 @@
-import 'package:nodered/src/node_red_nodes/node_red_visual_node_abstract.dart';
+import 'package:nodered/src/node_red_nodes/basic_nodes/node_red_visual_node_abstract.dart';
 import 'package:nodered/src/utils.dart';
 
 class NodeRedInjectAtASpecificTimeNode extends NodeRedVisualNodeAbstract {
@@ -44,7 +44,7 @@ class NodeRedInjectAtASpecificTimeNode extends NodeRedVisualNodeAbstract {
     "topic": "",
     "payload": "",
     "payloadType": "date",
-    "wires":  ${fixWiresForNodeRed()}
+    "wires":  ${fixWiresString()}
   }''';
   }
 
