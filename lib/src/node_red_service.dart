@@ -74,8 +74,8 @@ class NodeRedService {
   /// Install node module if needed and set one global node
   /// Label is name of the flow
   Future<String> setGlobalNodes({
-    required String? moduleToUse,
     required String nodes,
+    String? moduleToUse,
   }) async {
     try {
       /// Install the new node module

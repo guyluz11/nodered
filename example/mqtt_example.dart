@@ -7,21 +7,19 @@ import 'package:uuid/uuid.dart';
 Future<void> main() async {
   NodeRedService service = NodeRedService();
   logger.i('IP ${service.nodeRedApi.address} port ${service.nodeRedApi.port}');
-  final NodeRedMqttBrokerNode brokerNode =
-      NodeRedMqttBrokerNode(name: 'CyBear  Jinni Broker');
+
+  NodeRedMqttApi nodeRedMqttApi = NodeRedMqttApi(repository: service);
+  String brokerNodeId = await nodeRedMqttApi.createBroker('BrokerNode');
 
   String nodes = '';
-  nodes += brokerNode.toString();
-  nodes += ', ';
 
   final String topic = 'BaseTopic/TopicTypeName/uniqueId/on';
   final NodeRedMqttOutNode mqttNode = NodeRedMqttOutNode(
-    brokerNodeId: brokerNode.id,
+    brokerNodeId: brokerNodeId,
     topic: topic,
     name: 'deviceName - on',
   );
   nodes += mqttNode.toString();
-  nodes += ', ';
 
   final NodeRedFunctionNode functionForNode =
       NodeRedFunctionNode.passOnlyNewAction(
@@ -34,13 +32,12 @@ Future<void> main() async {
     },
   );
 
-  nodes += functionForNode.toString();
-  nodes += ', ';
+  nodes += ', ${functionForNode.toString()}';
 
   final String mqttInNodeId = const Uuid().v1();
   final NodeRedMqttInNode nodeRedMqttInNode = NodeRedMqttInNode(
     name: 'mqttIn',
-    brokerNodeId: brokerNode.id,
+    brokerNodeId: brokerNodeId,
     topic: topic,
     wires: {
       {functionForNode.id}
@@ -48,7 +45,7 @@ Future<void> main() async {
     tempId: mqttInNodeId,
   );
 
-  nodes += nodeRedMqttInNode.toString();
+  nodes += ', ${nodeRedMqttInNode.toString()}';
 
   nodes = '[\n$nodes\n]';
 

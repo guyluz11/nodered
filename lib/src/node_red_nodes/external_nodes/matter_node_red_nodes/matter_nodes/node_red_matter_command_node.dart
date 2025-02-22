@@ -1,7 +1,7 @@
 import 'package:nodered/src/node_red_nodes/basic_nodes/node_red_visual_node_abstract.dart';
 
-class NodeRedMatterManagerNode extends NodeRedVisualNodeAbstract {
-  NodeRedMatterManagerNode({
+class NodeRedMatterCommandNode extends NodeRedVisualNodeAbstract {
+  NodeRedMatterCommandNode({
     required this.controller,
     required this.deviceName,
     required this.cluster,

@@ -4,12 +4,11 @@ class NodeRedMatterManagerNode extends NodeRedVisualNodeAbstract {
   NodeRedMatterManagerNode({
     required this.controller,
     required this.deviceName,
-    required this.cluster,
-    required this.code,
-    required this.attr,
     required this.method,
-    required this.label,
+    this.label = '',
+    this.code = '',
     super.name,
+    super.wires,
   }) : super(
           type: 'mattermanager',
         );
@@ -17,13 +16,10 @@ class NodeRedMatterManagerNode extends NodeRedVisualNodeAbstract {
   final String controller;
   final String deviceName;
   final String code;
-  final String attr;
 
   /// Device name
   final String label;
   final NodeRedMatterManagerMethodEnum method;
-  final int cluster;
-
   @override
   String toString() {
     return '''
@@ -35,7 +31,7 @@ class NodeRedMatterManagerNode extends NodeRedVisualNodeAbstract {
     "method": "${method.name}",
     "code": "$code",
     "codeType": "str",
-    "deviceidType": "str",
+    "deviceidType": "msg",
     "label": "$label",
     "labelType": "str",
     "wires":  ${fixWiresString()}
@@ -50,7 +46,7 @@ enum NodeRedMatterManagerMethodEnum {
   decommissionDevice,
   openCommissioningWindow,
   listDevices,
-  getDevices,
+  getDevice,
   renameDevice,
   ;
 }

@@ -5,13 +5,13 @@ class ChromecastNodeRedApi {
     required this.repository,
     required this.nodeRedApiBaseTopic,
     required this.nodeRedDevicesTopic,
-    this.nodeRedMqttBrokerNodeName = 'NodeRed plugs Api Broker',
+    required this.brokerNodeId,
   });
 
   final NodeRedService repository;
   final String nodeRedApiBaseTopic;
   final String nodeRedDevicesTopic;
-  final String nodeRedMqttBrokerNodeName;
+  final String brokerNodeId;
 
   final String module = 'node-red-contrib-castv2';
 
@@ -28,6 +28,7 @@ class ChromecastNodeRedApi {
   Future<String> setNewYoutubeVideoNodes(
     String entityUniqueId,
     String deviceIp,
+    String mqttBrokerNodeId,
   ) async {
     String nodes = '[\n';
 
@@ -36,20 +37,14 @@ class ChromecastNodeRedApi {
     final String topic =
         '$nodeRedApiBaseTopic/$nodeRedDevicesTopic/$entityUniqueId/$youtubeVideoTopicProperty';
 
-    /// Mqtt broker
-    final NodeRedMqttBrokerNode mqttBrokerNode =
-        NodeRedMqttBrokerNode(name: nodeRedMqttBrokerNodeName);
-
-    nodes += mqttBrokerNode.toString();
-
     /// Mqtt out
 
     final NodeRedMqttOutNode mqttNode = NodeRedMqttOutNode(
-      brokerNodeId: mqttBrokerNode.id,
+      brokerNodeId: brokerNodeId,
       topic: '$topic/$outputVideoTopicProperty',
       name: '$mqttNodeName - $outputVideoTopicProperty',
     );
-    nodes += ', $mqttNode';
+    nodes += '$mqttNode';
 
     /// Cast v2 connection
     final NodeRedCastV2ConnectionNode nodeRedCastV2ConnectionNode =
@@ -68,50 +63,50 @@ class ChromecastNodeRedApi {
     );
     nodes += ', $nodeRedCastV2SenderNode';
 
-    nodes += ', ${openUrlNodesString(
-      mqttBrokerNode,
+    nodes += ', ${_openUrlNodesString(
+      brokerNodeId,
       nodeRedCastV2SenderNode.id,
       mqttNodeName,
       topic,
     )}';
 
-    nodes += ', ${stopVideoNodesString(
-      mqttBrokerNode,
+    nodes += ', ${_stopVideoNodesString(
+      brokerNodeId,
       nodeRedCastV2SenderNode.id,
       mqttNodeName,
       topic,
     )}';
 
-    nodes += ', ${pauseVideoNodesString(
-      mqttBrokerNode,
+    nodes += ', ${_pauseVideoNodesString(
+      brokerNodeId,
       nodeRedCastV2SenderNode.id,
       mqttNodeName,
       topic,
     )}';
 
-    nodes += ', ${playVideoNodesString(
-      mqttBrokerNode,
+    nodes += ', ${_playVideoNodesString(
+      brokerNodeId,
       nodeRedCastV2SenderNode.id,
       mqttNodeName,
       topic,
     )}';
 
-    nodes += ', ${queuePrevVideoNodesString(
-      mqttBrokerNode,
+    nodes += ', ${_queuePrevVideoNodesString(
+      brokerNodeId,
       nodeRedCastV2SenderNode.id,
       mqttNodeName,
       topic,
     )}';
 
-    nodes += ', ${queueNextVideoNodesString(
-      mqttBrokerNode,
+    nodes += ', ${_queueNextVideoNodesString(
+      brokerNodeId,
       nodeRedCastV2SenderNode.id,
       mqttNodeName,
       topic,
     )}';
 
-    nodes += ', ${closeVideoNodesString(
-      mqttBrokerNode,
+    nodes += ', ${_closeVideoNodesString(
+      brokerNodeId,
       nodeRedCastV2SenderNode.id,
       mqttNodeName,
       topic,
@@ -128,8 +123,8 @@ class ChromecastNodeRedApi {
     );
   }
 
-  String openUrlNodesString(
-    NodeRedMqttBrokerNode mqttBrokerNode,
+  String _openUrlNodesString(
+    String brokerNodeId,
     String nextNodeIdToConnectToo,
     String mqttNodeName,
     String topic,
@@ -152,7 +147,7 @@ class ChromecastNodeRedApi {
     /// Mqtt in
     final NodeRedMqttInNode nodeRedMqttInNode = NodeRedMqttInNode(
       name: '$mqttNodeName - $playingVideoTopicProperty',
-      brokerNodeId: mqttBrokerNode.id,
+      brokerNodeId: brokerNodeId,
       topic: '$topic/$playingVideoTopicProperty',
       wires: {
         {
@@ -163,8 +158,8 @@ class ChromecastNodeRedApi {
     return '$nodes,\n$nodeRedMqttInNode';
   }
 
-  String stopVideoNodesString(
-    NodeRedMqttBrokerNode mqttBrokerNode,
+  String _stopVideoNodesString(
+    String brokerNodeId,
     String nextNodeIdToConnectToo,
     String mqttNodeName,
     String topic,
@@ -187,7 +182,7 @@ class ChromecastNodeRedApi {
     /// Mqtt in
     final NodeRedMqttInNode nodeRedMqttInNode = NodeRedMqttInNode(
       name: '$mqttNodeName - $stopVideoTopicProperty',
-      brokerNodeId: mqttBrokerNode.id,
+      brokerNodeId: brokerNodeId,
       topic: '$topic/$stopVideoTopicProperty',
       wires: {
         {
@@ -198,8 +193,8 @@ class ChromecastNodeRedApi {
     return '$nodes,\n$nodeRedMqttInNode';
   }
 
-  String pauseVideoNodesString(
-    NodeRedMqttBrokerNode mqttBrokerNode,
+  String _pauseVideoNodesString(
+    String brokerNodeId,
     String nextNodeIdToConnectToo,
     String mqttNodeName,
     String topic,
@@ -222,7 +217,7 @@ class ChromecastNodeRedApi {
     /// Mqtt in
     final NodeRedMqttInNode nodeRedMqttInNode = NodeRedMqttInNode(
       name: '$mqttNodeName - $pauseVideoTopicProperty',
-      brokerNodeId: mqttBrokerNode.id,
+      brokerNodeId: brokerNodeId,
       topic: '$topic/$pauseVideoTopicProperty',
       wires: {
         {
@@ -233,8 +228,8 @@ class ChromecastNodeRedApi {
     return '$nodes,\n$nodeRedMqttInNode';
   }
 
-  String playVideoNodesString(
-    NodeRedMqttBrokerNode mqttBrokerNode,
+  String _playVideoNodesString(
+    String brokerNodeId,
     String nextNodeIdToConnectToo,
     String mqttNodeName,
     String topic,
@@ -257,7 +252,7 @@ class ChromecastNodeRedApi {
     /// Mqtt in
     final NodeRedMqttInNode nodeRedMqttInNode = NodeRedMqttInNode(
       name: '$mqttNodeName - $playVideoTopicProperty',
-      brokerNodeId: mqttBrokerNode.id,
+      brokerNodeId: brokerNodeId,
       topic: '$topic/$playVideoTopicProperty',
       wires: {
         {
@@ -268,8 +263,8 @@ class ChromecastNodeRedApi {
     return '$nodes,\n$nodeRedMqttInNode';
   }
 
-  String queuePrevVideoNodesString(
-    NodeRedMqttBrokerNode mqttBrokerNode,
+  String _queuePrevVideoNodesString(
+    String brokerNodeId,
     String nextNodeIdToConnectToo,
     String mqttNodeName,
     String topic,
@@ -292,7 +287,7 @@ class ChromecastNodeRedApi {
     /// Mqtt in
     final NodeRedMqttInNode nodeRedMqttInNode = NodeRedMqttInNode(
       name: '$mqttNodeName - $queuePrevVideoTopicProperty',
-      brokerNodeId: mqttBrokerNode.id,
+      brokerNodeId: brokerNodeId,
       topic: '$topic/$queuePrevVideoTopicProperty',
       wires: {
         {
@@ -303,8 +298,8 @@ class ChromecastNodeRedApi {
     return '$nodes,\n$nodeRedMqttInNode';
   }
 
-  String queueNextVideoNodesString(
-    NodeRedMqttBrokerNode mqttBrokerNode,
+  String _queueNextVideoNodesString(
+    String brokerNodeId,
     String nextNodeIdToConnectToo,
     String mqttNodeName,
     String topic,
@@ -327,7 +322,7 @@ class ChromecastNodeRedApi {
     /// Mqtt in
     final NodeRedMqttInNode nodeRedMqttInNode = NodeRedMqttInNode(
       name: '$mqttNodeName - $queueNextVideoTopicProperty',
-      brokerNodeId: mqttBrokerNode.id,
+      brokerNodeId: brokerNodeId,
       topic: '$topic/$queueNextVideoTopicProperty',
       wires: {
         {
@@ -338,8 +333,8 @@ class ChromecastNodeRedApi {
     return '$nodes,\n$nodeRedMqttInNode';
   }
 
-  String closeVideoNodesString(
-    NodeRedMqttBrokerNode mqttBrokerNode,
+  String _closeVideoNodesString(
+    String brokerNodeId,
     String nextNodeIdToConnectToo,
     String mqttNodeName,
     String topic,
@@ -362,7 +357,7 @@ class ChromecastNodeRedApi {
     /// Mqtt in
     final NodeRedMqttInNode nodeRedMqttInNode = NodeRedMqttInNode(
       name: '$mqttNodeName - $closeAppTopicProperty',
-      brokerNodeId: mqttBrokerNode.id,
+      brokerNodeId: brokerNodeId,
       topic: '$topic/$closeAppTopicProperty',
       wires: {
         {

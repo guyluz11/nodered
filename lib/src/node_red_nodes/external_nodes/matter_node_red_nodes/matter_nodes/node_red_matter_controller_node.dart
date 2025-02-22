@@ -11,7 +11,7 @@ class NodeRedMatterControllerNode extends NodeRedNodeAbstract {
     return '''
     {
     "id": "$id",
-    "type": "$type",
+    "type": "$type"
     }
     ''';
   }
