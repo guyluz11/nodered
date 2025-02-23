@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart';
 import 'package:nodered/nodered.dart';
+import 'package:nodered/src/node_red_nodes/basic_nodes/node_red_node_abstract.dart';
 
 /// Class to define all Node RED repo functions
 class NodeRedService {
@@ -107,4 +108,30 @@ class NodeRedService {
       );
 
   Future<Response> deleteFlowById(String id) => nodeRedApi.deleteFlowById(id);
+}
+
+class ManageNodes {
+  static Map<NodeTypes, NodeRedNodeAbstract> addedNodes = {};
+}
+
+enum NodeTypes {
+  matterCommand,
+  matterController,
+  matterManagerListDevices,
+  matterSubscribe,
+  mqttOut,
+  mqttIn,
+  mqttBroker,
+  matterManagerGetDevice,
+  injectMatterListDevices,
+  injectGetMatterDevices,
+  castConnection,
+  castSender,
+  castOpenUrl,
+  castStopInject,
+  castPauseInject,
+  castPlayInject,
+  castQueuePrevInject,
+  castQueueNextInject,
+  castCloseInject,
 }

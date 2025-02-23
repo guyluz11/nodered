@@ -1,11 +1,12 @@
 import 'package:nodered/src/node_red_nodes/basic_nodes/node_red_visual_node_abstract.dart';
 import 'package:nodered/src/utils.dart';
 
-class NodeRedInjectAtASpecificTimeNode extends NodeRedVisualNodeAbstract {
-  NodeRedInjectAtASpecificTimeNode({
-    required this.daysToRepeat,
-    required this.hourToRepeat,
-    required this.minutesToRepeat,
+class NodeRedInjectNode extends NodeRedVisualNodeAbstract {
+  NodeRedInjectNode({
+    this.daysToRepeat,
+    this.hourToRepeat,
+    this.minutesToRepeat,
+    this.props = const [],
     super.tempId,
     super.name,
     super.wires,
@@ -16,36 +17,56 @@ class NodeRedInjectAtASpecificTimeNode extends NodeRedVisualNodeAbstract {
   Set<String>? daysToRepeat;
   String? hourToRepeat;
   String? minutesToRepeat;
+  List<InjectNodeProp> props;
 
   @override
   String toString() {
-    final String crontab =
-        '$minutesToRepeat $hourToRepeat * * ${daysToRepeatAsCornTabRequire()}';
+    String propsAsString = '';
+
+    for (InjectNodeProp p in props) {
+      if (propsAsString.isNotEmpty) {
+        propsAsString += ',\n';
+      }
+      propsAsString += p.toString();
+    }
+
+    if (daysToRepeat != null ||
+        hourToRepeat != null ||
+        minutesToRepeat != null) {
+      final String crontab =
+          '$minutesToRepeat $hourToRepeat * * ${daysToRepeatAsCornTabRequire()}';
+
+      return '''
+        {
+          "id": "$id",
+          "type": "$type",
+          "name": "$name",
+          "props": [\n$propsAsString\n],
+          "repeat": "",
+          "crontab": "$crontab",
+          "once": false,
+          "onceDelay": 0.1,
+          "x": 400,
+          "y": 800,
+          "topic": "",
+          "wires":  ${fixWiresString()}
+        }''';
+    }
+
     return '''
-    {
-    "id": "$id",
-    "type": "$type",
-    "name": "$name",
-    "props": [
-        {
-            "p": "payload"
-        },
-        {
-            "p": "topic",
-            "vt": "str"
-        }
-    ],
-    "repeat": "",
-    "crontab": "$crontab",
-    "once": false,
-    "onceDelay": 0.1,
-    "x": 400,
-    "y": 800,
-    "topic": "",
-    "payload": "",
-    "payloadType": "date",
-    "wires":  ${fixWiresString()}
-  }''';
+      {
+        "id": "$id",
+        "type": "$type",
+        "name": "$name",
+        "props": [\n$propsAsString\n],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 400,
+        "y": 800,
+        "wires":  ${fixWiresString()}
+      }''';
   }
 
   String daysToRepeatAsCornTabRequire() {
@@ -80,4 +101,46 @@ class NodeRedInjectAtASpecificTimeNode extends NodeRedVisualNodeAbstract {
     }
     return daysToRepeatTemp;
   }
+}
+
+class InjectNodeProp {
+  InjectNodeProp({
+    required this.p,
+    this.vt,
+    this.v,
+  });
+
+  final String p;
+  final VtTypes? vt;
+  final String? v;
+
+  @override
+  String toString() {
+    String vAsString = '';
+    if (v != null) {
+      vAsString = ',\n"v": "$v"';
+    }
+
+    String vtAsString = '';
+    if (vt != null) {
+      vtAsString = ',\n"vt": "${vt!.name}"';
+    }
+
+    return '''
+    {
+      "p": "$p"
+      $vAsString
+      $vtAsString
+    }
+    ''';
+  }
+}
+
+enum VtTypes {
+  msg,
+  str,
+  json,
+
+  /// this is time stamp
+  date,
 }

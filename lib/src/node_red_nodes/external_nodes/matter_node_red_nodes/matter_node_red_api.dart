@@ -1,4 +1,5 @@
 import 'package:nodered/nodered.dart';
+import 'package:nodered/src/node_red_nodes/basic_nodes/common/node_red_inject_node.dart';
 import 'package:nodered/src/node_red_nodes/external_nodes/matter_node_red_nodes/matter_nodes/node_red_matter_manager_node.dart';
 
 import 'matter_nodes/node_red_matter_controller_node.dart';
@@ -28,6 +29,8 @@ class MatterNodeRedApi {
   Future<String> createController() async {
     String nodes = '';
     NodeRedMatterControllerNode controllerNode = NodeRedMatterControllerNode();
+    ManageNodes.addedNodes
+        .addEntries([MapEntry(NodeTypes.matterController, controllerNode)]);
 
     nodes += '$controllerNode';
 
@@ -63,6 +66,23 @@ class MatterNodeRedApi {
       flowId: 'matter_controller',
     );
   }
+  //
+  // /// Only one controller instance is needed
+  // Future<String> createController() async {
+  //   String nodes = '';
+  //   NodeRedMatterControllerNode controllerNode = NodeRedMatterControllerNode();
+  //
+  //   nodes += '$controllerNode';
+  //
+  //   nodes = '[\n$nodes\n]';
+  //
+  //   /// Setting the flow
+  //   repository.setGlobalNodes(
+  //     moduleToUse: module,
+  //     nodes: nodes,
+  //   );
+  //   return controllerNode.id;
+  // }
 
   /// Nodes for listing all the matter devices Id
   String _listDevicesNode({
@@ -77,6 +97,9 @@ class MatterNodeRedApi {
       topic: '${NodeRedMqttApi.baseTopic}/$listMatterOutTopic',
       name: 'List Matter Out',
     );
+
+    ManageNodes.addedNodes.addEntries([MapEntry(NodeTypes.mqttOut, mqttNode)]);
+
     nodes += '$mqttNode';
 
     NodeRedMatterManagerNode listDevices = NodeRedMatterManagerNode(
@@ -89,19 +112,24 @@ class MatterNodeRedApi {
       },
     );
 
+    ManageNodes.addedNodes.addEntries(
+        [MapEntry(NodeTypes.matterManagerListDevices, listDevices)]);
+
     nodes += ', $listDevices';
 
-    final NodeRedMqttInNode nodeRedMqttInNode = NodeRedMqttInNode(
+    NodeRedInjectNode inject = NodeRedInjectNode(
       name: 'List Matter In',
-      brokerNodeId: brokerNodeId,
-      topic: '${NodeRedMqttApi.baseTopic}/$listMatterInTopic',
       wires: {
         {
           listDevices.id,
         },
       },
     );
-    nodes += ', $nodeRedMqttInNode';
+
+    ManageNodes.addedNodes
+        .addEntries([MapEntry(NodeTypes.injectMatterListDevices, inject)]);
+    nodes += ', $inject';
+
     return nodes;
   }
 
@@ -118,6 +146,8 @@ class MatterNodeRedApi {
       topic: '${NodeRedMqttApi.baseTopic}/$getMatterOutTopic',
       name: 'Get Matter Out',
     );
+
+    ManageNodes.addedNodes.addEntries([MapEntry(NodeTypes.mqttOut, mqttNode)]);
     nodes += '$mqttNode';
 
     NodeRedMatterManagerNode getDevices = NodeRedMatterManagerNode(
@@ -130,17 +160,22 @@ class MatterNodeRedApi {
       },
     );
 
+    ManageNodes.addedNodes
+        .addEntries([MapEntry(NodeTypes.matterManagerGetDevice, getDevices)]);
+
     nodes += ', $getDevices';
 
-    final NodeRedMqttInNode nodeRedMqttInNode = NodeRedMqttInNode(
+    NodeRedInjectNode inject = NodeRedInjectNode(
       name: 'Get Matter In',
-      brokerNodeId: brokerNodeId,
-      topic: '${NodeRedMqttApi.baseTopic}/$getMatterInTopic',
       wires: {
         {getDevices.id}
       },
     );
-    nodes += ', $nodeRedMqttInNode';
+
+    ManageNodes.addedNodes
+        .addEntries([MapEntry(NodeTypes.injectGetMatterDevices, inject)]);
+
+    nodes += ', $inject';
     return nodes;
   }
 }

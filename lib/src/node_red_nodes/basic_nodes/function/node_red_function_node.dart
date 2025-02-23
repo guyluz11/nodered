@@ -17,7 +17,7 @@ class NodeRedFunctionNode extends NodeRedVisualNodeAbstract {
     Set<Set<String>>? wires,
     String? name,
   }) {
-    final String function = '''msg.payload=\\"$action\\"; return msg;''';
+    final String function = '''msg.payload=`$action`;return msg;''';
     return NodeRedFunctionNode(funcString: function, wires: wires, name: name);
   }
 

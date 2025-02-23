@@ -15,12 +15,16 @@ class NodeRedMqttApi {
     final NodeRedMqttBrokerNode mqttBrokerNode =
         NodeRedMqttBrokerNode(name: name);
 
+    ManageNodes.addedNodes
+        .addEntries([MapEntry(NodeTypes.mqttBroker, mqttBrokerNode)]);
+
     nodes += '$mqttBrokerNode';
 
     nodes += '\n]';
 
     /// Setting the flow
     await repository.setGlobalNodes(nodes: nodes);
+
     return mqttBrokerNode.id;
   }
 }

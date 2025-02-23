@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:http/http.dart';
 import 'package:nodered/nodered.dart';
 import 'package:nodered/src/utils.dart';
 
@@ -15,10 +18,27 @@ Future<void> main() async {
     nodeRedDevicesTopic: 'devicesTopic',
     brokerNodeId: brokerNodeId,
   );
+
   String response = await matterNode.setNewYoutubeVideoNodes(
     'testDevice',
     '10.0.0.1',
     brokerNodeId,
   );
+
+  String castSenderNodeId =
+      ManageNodes.addedNodes[NodeTypes.castSender]?.id ?? '';
+  final url = Uri.parse('http://localhost:1880/$castSenderNodeId');
+
+  try {
+    final response = await post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({"payload": castSenderNodeId}),
+    );
+    logger.i(response.statusCode);
+  } catch (e) {}
+
   logger.i('Done response $response');
 }

@@ -1,4 +1,6 @@
 import 'package:nodered/nodered.dart';
+import 'package:nodered/src/node_red_nodes/basic_nodes/common/node_red_inject_node.dart';
+import 'package:nodered/src/node_red_nodes/basic_nodes/network/node_red_http_in_node.dart';
 
 class ChromecastNodeRedApi {
   ChromecastNodeRedApi({
@@ -38,22 +40,25 @@ class ChromecastNodeRedApi {
         '$nodeRedApiBaseTopic/$nodeRedDevicesTopic/$entityUniqueId/$youtubeVideoTopicProperty';
 
     /// Mqtt out
-
     final NodeRedMqttOutNode mqttNode = NodeRedMqttOutNode(
       brokerNodeId: brokerNodeId,
       topic: '$topic/$outputVideoTopicProperty',
       name: '$mqttNodeName - $outputVideoTopicProperty',
     );
     nodes += '$mqttNode';
+    ManageNodes.addedNodes.addEntries([MapEntry(NodeTypes.mqttOut, mqttNode)]);
 
     /// Cast v2 connection
     final NodeRedCastV2ConnectionNode nodeRedCastV2ConnectionNode =
-        NodeRedCastV2ConnectionNode(host: deviceIp);
+        NodeRedCastV2ConnectionNode(host: deviceIp, name: 'Connection');
     nodes += ', $nodeRedCastV2ConnectionNode';
+    ManageNodes.addedNodes.addEntries(
+        [MapEntry(NodeTypes.castConnection, nodeRedCastV2ConnectionNode)]);
 
     /// Cast v2 sender
     final NodeRedCastV2SenderNode nodeRedCastV2SenderNode =
         NodeRedCastV2SenderNode(
+      name: 'Sender',
       connectionId: nodeRedCastV2ConnectionNode.id,
       wires: {
         {
@@ -62,55 +67,86 @@ class ChromecastNodeRedApi {
       },
     );
     nodes += ', $nodeRedCastV2SenderNode';
+    ManageNodes.addedNodes
+        .addEntries([MapEntry(NodeTypes.castSender, nodeRedCastV2SenderNode)]);
 
-    nodes += ', ${_openUrlNodesString(
-      brokerNodeId,
-      nodeRedCastV2SenderNode.id,
-      mqttNodeName,
-      topic,
-    )}';
+    NodeRedFunctionNode nodeRedFunctionNode =
+        NodeRedFunctionNode.passOnlyNewAction(
+      name: 'Open YouTube command',
+      action:
+          '{\\"app\\": \\"YouTube\\", \\"type\\": \\"MEDIA\\", \\"videoId\\": \\"\${msg.payload.payload || \\"\\"}\\"}',
+      wires: {
+        {nodeRedCastV2SenderNode.id},
+      },
+    );
+    nodes += ', ${nodeRedFunctionNode.toString()}';
 
-    nodes += ', ${_stopVideoNodesString(
-      brokerNodeId,
-      nodeRedCastV2SenderNode.id,
-      mqttNodeName,
-      topic,
-    )}';
+    /// Open Url of a video
+    NodeRedHttpInNode nodeRedHttpInNode = NodeRedHttpInNode(
+        name: 'Open YouTube URL',
+        url: nodeRedCastV2SenderNode.id,
+        method: NodeRedHttpMethod.post,
+        wires: {
+          {nodeRedFunctionNode.id},
+        });
 
-    nodes += ', ${_pauseVideoNodesString(
-      brokerNodeId,
-      nodeRedCastV2SenderNode.id,
-      mqttNodeName,
-      topic,
-    )}';
+    nodes += ', ${nodeRedHttpInNode.toString()}';
+    ManageNodes.addedNodes
+        .addEntries([MapEntry(NodeTypes.castOpenUrl, nodeRedHttpInNode)]);
 
-    nodes += ', ${_playVideoNodesString(
-      brokerNodeId,
-      nodeRedCastV2SenderNode.id,
-      mqttNodeName,
-      topic,
-    )}';
+    /// Stop Video
+    NodeRedInjectNode stopInject = injectNodeWithAction(
+        name: 'Stop',
+        nodeRedCastV2SenderNodeId: nodeRedCastV2SenderNode.id,
+        v: '{\\"type\\": \\"STOP\\"}');
+    nodes += ', ${stopInject.toString()}';
+    ManageNodes.addedNodes
+        .addEntries([MapEntry(NodeTypes.castStopInject, stopInject)]);
 
-    nodes += ', ${_queuePrevVideoNodesString(
-      brokerNodeId,
-      nodeRedCastV2SenderNode.id,
-      mqttNodeName,
-      topic,
-    )}';
+    /// Pause Video
+    NodeRedInjectNode pauseInject = injectNodeWithAction(
+        name: 'Pause',
+        nodeRedCastV2SenderNodeId: nodeRedCastV2SenderNode.id,
+        v: '{\\"type\\": \\"PAUSE\\"}');
+    nodes += ', ${pauseInject.toString()}';
+    ManageNodes.addedNodes
+        .addEntries([MapEntry(NodeTypes.castPauseInject, pauseInject)]);
 
-    nodes += ', ${_queueNextVideoNodesString(
-      brokerNodeId,
-      nodeRedCastV2SenderNode.id,
-      mqttNodeName,
-      topic,
-    )}';
+    /// Play Video
+    NodeRedInjectNode platInject = injectNodeWithAction(
+        name: 'Play',
+        nodeRedCastV2SenderNodeId: nodeRedCastV2SenderNode.id,
+        v: '{\\"type\\": \\"PLAY\\"}');
+    nodes += ', ${platInject.toString()}';
+    ManageNodes.addedNodes
+        .addEntries([MapEntry(NodeTypes.castPlayInject, platInject)]);
 
-    nodes += ', ${_closeVideoNodesString(
-      brokerNodeId,
-      nodeRedCastV2SenderNode.id,
-      mqttNodeName,
-      topic,
-    )}';
+    /// Queue Prev Video
+    NodeRedInjectNode queuePrevInject = injectNodeWithAction(
+        name: 'Queue Prev',
+        nodeRedCastV2SenderNodeId: nodeRedCastV2SenderNode.id,
+        v: '{\\"type\\": \\"QUEUE_PREV\\"}');
+    nodes += ', ${queuePrevInject.toString()}';
+    ManageNodes.addedNodes
+        .addEntries([MapEntry(NodeTypes.castQueuePrevInject, queuePrevInject)]);
+
+    /// Queue Next Video
+    NodeRedInjectNode queueNextInject = injectNodeWithAction(
+        name: 'Queue Next',
+        nodeRedCastV2SenderNodeId: nodeRedCastV2SenderNode.id,
+        v: '{\\"type\\": \\"QUEUE_NEXT\\"}');
+    nodes += ', ${queueNextInject.toString()}';
+    ManageNodes.addedNodes
+        .addEntries([MapEntry(NodeTypes.castQueueNextInject, queueNextInject)]);
+
+    /// Close Video command
+    NodeRedInjectNode closeInject = injectNodeWithAction(
+        name: 'Close',
+        nodeRedCastV2SenderNodeId: nodeRedCastV2SenderNode.id,
+        v: '{\\"type\\": \\"CLOSE\\"}');
+    nodes += ', ${closeInject.toString()}';
+    ManageNodes.addedNodes
+        .addEntries([MapEntry(NodeTypes.castCloseInject, closeInject)]);
 
     nodes += '\n]';
 
@@ -123,248 +159,18 @@ class ChromecastNodeRedApi {
     );
   }
 
-  String _openUrlNodesString(
-    String brokerNodeId,
-    String nextNodeIdToConnectToo,
-    String mqttNodeName,
-    String topic,
-  ) {
-    String nodes = '';
-
-    /// Function node
-    const String functionString =
-        '''msg.payload = JSON.parse(\\"{\\\\\\"app\\\\\\": \\\\\\"YouTube\\\\\\", \\\\\\"type\\\\\\": \\\\\\"MEDIA\\\\\\",\\\\\\"videoId\\\\\\": \\\\\\"\\" + msg.payload + \\"\\\\\\"}\\"); return msg;''';
-    final NodeRedFunctionNode nodeRedFunctionNode = NodeRedFunctionNode(
-      funcString: functionString,
+  NodeRedInjectNode injectNodeWithAction(
+      {required String name,
+      required String nodeRedCastV2SenderNodeId,
+      required String v}) {
+    return NodeRedInjectNode(
+      name: name,
+      props: [
+        InjectNodeProp(p: 'payload', vt: VtTypes.json, v: v),
+      ],
       wires: {
-        {
-          nextNodeIdToConnectToo,
-        },
+        {nodeRedCastV2SenderNodeId},
       },
     );
-    nodes += nodeRedFunctionNode.toString();
-
-    /// Mqtt in
-    final NodeRedMqttInNode nodeRedMqttInNode = NodeRedMqttInNode(
-      name: '$mqttNodeName - $playingVideoTopicProperty',
-      brokerNodeId: brokerNodeId,
-      topic: '$topic/$playingVideoTopicProperty',
-      wires: {
-        {
-          nodeRedFunctionNode.id,
-        },
-      },
-    );
-    return '$nodes,\n$nodeRedMqttInNode';
-  }
-
-  String _stopVideoNodesString(
-    String brokerNodeId,
-    String nextNodeIdToConnectToo,
-    String mqttNodeName,
-    String topic,
-  ) {
-    String nodes = '';
-
-    /// Function node
-    const String functionString =
-        '''msg.payload = JSON.parse(\\"{\\\\\\"type\\\\\\": \\\\\\"STOP\\\\\\"}\\"); return msg;''';
-    final NodeRedFunctionNode nodeRedFunctionNode = NodeRedFunctionNode(
-      funcString: functionString,
-      wires: {
-        {
-          nextNodeIdToConnectToo,
-        },
-      },
-    );
-    nodes += nodeRedFunctionNode.toString();
-
-    /// Mqtt in
-    final NodeRedMqttInNode nodeRedMqttInNode = NodeRedMqttInNode(
-      name: '$mqttNodeName - $stopVideoTopicProperty',
-      brokerNodeId: brokerNodeId,
-      topic: '$topic/$stopVideoTopicProperty',
-      wires: {
-        {
-          nodeRedFunctionNode.id,
-        },
-      },
-    );
-    return '$nodes,\n$nodeRedMqttInNode';
-  }
-
-  String _pauseVideoNodesString(
-    String brokerNodeId,
-    String nextNodeIdToConnectToo,
-    String mqttNodeName,
-    String topic,
-  ) {
-    String nodes = '';
-
-    /// Function node
-    const String functionString =
-        '''msg.payload = JSON.parse(\\"{\\\\\\"type\\\\\\": \\\\\\"PAUSE\\\\\\"}\\"); return msg;''';
-    final NodeRedFunctionNode nodeRedFunctionNode = NodeRedFunctionNode(
-      funcString: functionString,
-      wires: {
-        {
-          nextNodeIdToConnectToo,
-        },
-      },
-    );
-    nodes += nodeRedFunctionNode.toString();
-
-    /// Mqtt in
-    final NodeRedMqttInNode nodeRedMqttInNode = NodeRedMqttInNode(
-      name: '$mqttNodeName - $pauseVideoTopicProperty',
-      brokerNodeId: brokerNodeId,
-      topic: '$topic/$pauseVideoTopicProperty',
-      wires: {
-        {
-          nodeRedFunctionNode.id,
-        },
-      },
-    );
-    return '$nodes,\n$nodeRedMqttInNode';
-  }
-
-  String _playVideoNodesString(
-    String brokerNodeId,
-    String nextNodeIdToConnectToo,
-    String mqttNodeName,
-    String topic,
-  ) {
-    String nodes = '';
-
-    /// Function node
-    const String functionString =
-        '''msg.payload = JSON.parse(\\"{\\\\\\"type\\\\\\": \\\\\\"PLAY\\\\\\"}\\"); return msg;''';
-    final NodeRedFunctionNode nodeRedFunctionNode = NodeRedFunctionNode(
-      funcString: functionString,
-      wires: {
-        {
-          nextNodeIdToConnectToo,
-        },
-      },
-    );
-    nodes += nodeRedFunctionNode.toString();
-
-    /// Mqtt in
-    final NodeRedMqttInNode nodeRedMqttInNode = NodeRedMqttInNode(
-      name: '$mqttNodeName - $playVideoTopicProperty',
-      brokerNodeId: brokerNodeId,
-      topic: '$topic/$playVideoTopicProperty',
-      wires: {
-        {
-          nodeRedFunctionNode.id,
-        },
-      },
-    );
-    return '$nodes,\n$nodeRedMqttInNode';
-  }
-
-  String _queuePrevVideoNodesString(
-    String brokerNodeId,
-    String nextNodeIdToConnectToo,
-    String mqttNodeName,
-    String topic,
-  ) {
-    String nodes = '';
-
-    /// Function node
-    const String functionString =
-        '''msg.payload = JSON.parse(\\"{\\\\\\"type\\\\\\": \\\\\\"QUEUE_PREV\\\\\\"}\\"); return msg;''';
-    final NodeRedFunctionNode nodeRedFunctionNode = NodeRedFunctionNode(
-      funcString: functionString,
-      wires: {
-        {
-          nextNodeIdToConnectToo,
-        },
-      },
-    );
-    nodes += nodeRedFunctionNode.toString();
-
-    /// Mqtt in
-    final NodeRedMqttInNode nodeRedMqttInNode = NodeRedMqttInNode(
-      name: '$mqttNodeName - $queuePrevVideoTopicProperty',
-      brokerNodeId: brokerNodeId,
-      topic: '$topic/$queuePrevVideoTopicProperty',
-      wires: {
-        {
-          nodeRedFunctionNode.id,
-        },
-      },
-    );
-    return '$nodes,\n$nodeRedMqttInNode';
-  }
-
-  String _queueNextVideoNodesString(
-    String brokerNodeId,
-    String nextNodeIdToConnectToo,
-    String mqttNodeName,
-    String topic,
-  ) {
-    String nodes = '';
-
-    /// Function node
-    const String functionString =
-        '''msg.payload = JSON.parse(\\"{\\\\\\"type\\\\\\": \\\\\\"QUEUE_NEXT\\\\\\"}\\"); return msg;''';
-    final NodeRedFunctionNode nodeRedFunctionNode = NodeRedFunctionNode(
-      funcString: functionString,
-      wires: {
-        {
-          nextNodeIdToConnectToo,
-        },
-      },
-    );
-    nodes += nodeRedFunctionNode.toString();
-
-    /// Mqtt in
-    final NodeRedMqttInNode nodeRedMqttInNode = NodeRedMqttInNode(
-      name: '$mqttNodeName - $queueNextVideoTopicProperty',
-      brokerNodeId: brokerNodeId,
-      topic: '$topic/$queueNextVideoTopicProperty',
-      wires: {
-        {
-          nodeRedFunctionNode.id,
-        },
-      },
-    );
-    return '$nodes,\n$nodeRedMqttInNode';
-  }
-
-  String _closeVideoNodesString(
-    String brokerNodeId,
-    String nextNodeIdToConnectToo,
-    String mqttNodeName,
-    String topic,
-  ) {
-    String nodes = '';
-
-    /// Function node
-    const String functionString =
-        '''msg.payload = JSON.parse(\\"{\\\\\\"type\\\\\\": \\\\\\"CLOSE\\\\\\"}\\"); return msg;''';
-    final NodeRedFunctionNode nodeRedFunctionNode = NodeRedFunctionNode(
-      funcString: functionString,
-      wires: {
-        {
-          nextNodeIdToConnectToo,
-        },
-      },
-    );
-    nodes += nodeRedFunctionNode.toString();
-
-    /// Mqtt in
-    final NodeRedMqttInNode nodeRedMqttInNode = NodeRedMqttInNode(
-      name: '$mqttNodeName - $closeAppTopicProperty',
-      brokerNodeId: brokerNodeId,
-      topic: '$topic/$closeAppTopicProperty',
-      wires: {
-        {
-          nodeRedFunctionNode.id,
-        },
-      },
-    );
-    return '$nodes,\n$nodeRedMqttInNode';
   }
 }

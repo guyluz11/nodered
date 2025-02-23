@@ -1,12 +1,12 @@
 import 'package:nodered/nodered.dart';
 import 'package:nodered/src/utils.dart';
 
-/// Mqtt example, MqttInNode -> functionNode -> MqttOut
 Future<void> main() async {
   NodeRedService service = NodeRedService();
   logger.i('IP ${service.nodeRedApi.address} port ${service.nodeRedApi.port}');
 
   NodeRedMqttApi nodeRedMqttApi = NodeRedMqttApi(repository: service);
+
   String brokerNodeId = await nodeRedMqttApi.createBroker('BrokerNode');
 
   MatterNodeRedApi matterNode = MatterNodeRedApi(
@@ -17,6 +17,11 @@ Future<void> main() async {
   );
 
   String matterControllerId = await matterNode.createController();
+
+  matterNode.addListDevicesManager(
+    controllerId: matterControllerId,
+  );
+
   matterNode.addListDevicesManager(
     controllerId: matterControllerId,
   );
