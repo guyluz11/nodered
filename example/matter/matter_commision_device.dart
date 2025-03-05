@@ -22,9 +22,5 @@ Future<void> main() async {
     controllerId: matterControllerId,
   );
 
-  matterNode.addListDevicesManager(
-    controllerId: matterControllerId,
-  );
-
   // TODO: create a flow for each new devices that got discovered
 }

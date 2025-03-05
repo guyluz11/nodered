@@ -1,6 +1,7 @@
 library;
 
 export 'src/node_red_api.dart';
+export 'src/node_red_nodes/basic_nodes/common/node_red_inject_node.dart';
 export 'src/node_red_nodes/basic_nodes/function/node_red_function_node.dart';
 export 'src/node_red_nodes/basic_nodes/network/node_red_mqtt_api.dart';
 export 'src/node_red_nodes/basic_nodes/network/node_red_mqtt_broker_node.dart';

@@ -31,7 +31,7 @@ class NodeRedMatterManagerNode extends NodeRedVisualNodeAbstract {
     "method": "${method.name}",
     "code": "$code",
     "codeType": "str",
-    "deviceidType": "msg",
+    "deviceidType": "str",
     "label": "$label",
     "labelType": "str",
     "wires":  ${fixWiresString()}
